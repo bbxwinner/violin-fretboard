@@ -1,0 +1,30 @@
+{
+  "name": "viool-frontend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "@nuxtjs/i18n": "^10.6.0",
+    "@nuxtjs/sitemap": "^8.5.1",
+    "@pinia/nuxt": "^0.11.0",
+    "midi-parser-js": "^4.0.4",
+    "nuxt": "3.21.11",
+    "nuxt-gtag": "^3.0.2",
+    "pinia": "^3.0.2",
+    "vexflow": "^5.0.0",
+    "vite-plugin-vuetify": "^2.1.0",
+    "vue": "^3.5.0",
+    "vue-router": "^4.5.0",
+    "vuetify": "^3.8.2"
+  },
+  "devDependencies": {
+    "sass": "^1.83.0"
+  }
+}
