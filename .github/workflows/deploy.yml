@@ -10,7 +10,7 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [nuxt-source]   # ← 源码分支，如有改动请改成你的源码分支
+    branches: [main]          # 源码分支（本仓库的 main 即源码分支）
   workflow_dispatch:          # 允许在 Actions 页面手动触发
 
 # 同一时间只保留一个部署任务，新推送会取消旧的进行中任务
