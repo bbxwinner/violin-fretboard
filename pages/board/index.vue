@@ -1,20 +1,18 @@
 <template>
   <v-container>
-    <v-card>
-      <v-row no-gutters>
-        <v-col cols="6" class="d-none d-sm-block">
-          <div id="control-panel">
-            <v-card elevation="2">
-              <note-info :is-mobile="false" class="note-info-desktop" />
-              <preferences :is-mobile="false" />
-            </v-card>
-          </div>
-        </v-col>
-        <v-col cols="12" sm="6">
-          <finger />
-        </v-col>
-      </v-row>
-    </v-card>
+    <v-row no-gutters>
+      <v-col cols="6" class="d-none d-sm-block">
+        <div id="control-panel">
+          <v-sheet elevation="2">
+            <note-info :is-mobile="false" class="note-info-desktop" />
+          </v-sheet>
+          <preferences :is-mobile="false" />
+        </div>
+      </v-col>
+      <v-col cols="12" sm="6">
+        <finger />
+      </v-col>
+    </v-row>
     <v-row class="info-mobile d-block d-sm-none" justify="center">
       <v-col cols="12" class="info-fixed">
         <note-info :is-mobile="true" />
@@ -67,10 +65,12 @@ definePageMeta({
 
 const store = useBoardStore()
 
+// 音频库自托管（public/ 下），避免依赖外部 GitHub Pages 域名（部分地区无法访问）
+const { app: runtimeApp } = useRuntimeConfig()
 useHead({
   script: [
-    { src: 'https://surikov.github.io/webaudiofont/npm/dist/WebAudioFontPlayer.js' },
-    { src: 'https://surikov.github.io/webaudiofontdata/sound/0400_Aspirin_sf2_file.js' },
+    { src: `${runtimeApp.baseURL}WebAudioFontPlayer.js`, defer: true },
+    { src: `${runtimeApp.baseURL}0400_Aspirin_sf2_file.js`, defer: true },
   ],
 })
 
@@ -78,8 +78,10 @@ let sf2: any
 let audioCtx: AudioContext | null = null
 let player: any
 
-function initAudio() {
+function ensureAudio() {
   const w = window as any
+  if (player) return
+  if (!w.WebAudioFontPlayer || !w._tone_0400_Aspirin_sf2_file) return
   sf2 = w._tone_0400_Aspirin_sf2_file
   const AC = w.AudioContext || w.webkitAudioContext
   audioCtx = new AC()
@@ -88,13 +90,24 @@ function initAudio() {
 }
 
 function playNote(pitch: string, octave: number, duration: number, velocity: number) {
+  ensureAudio()
   const v = noteToMidi(pitch + octave)
-  if (v === null || !audioCtx) return
+  if (v === null || !audioCtx || !player) return
   player.queueWaveTable(audioCtx, audioCtx.destination, sf2, 0, v, duration, velocity / 127)
 }
 
 onMounted(() => {
-  if (!player) initAudio()
+  // defer 脚本可能尚未就绪：自动重试 30s；之后每次点音符也会懒初始化
+  let n = 0
+  const tick = () => {
+    ensureAudio()
+    if (!player && n++ < 60) setTimeout(tick, 500)
+  }
+  tick()
+})
+
+onUnmounted(() => {
+  store.stopArpeggioPlay()
 })
 
 watch(
@@ -114,7 +127,11 @@ watch(
 }
 
 .vf-container {
+  overflow: hidden;
   padding: 0 !important;
+}
+.vf-container svg {
+  max-width: 100%;
 }
 .note-info-octave-label {
   margin-left: 10px;

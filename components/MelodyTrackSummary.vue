@@ -7,7 +7,7 @@
       </template>
       <v-list-item-title>Track {{ track.index === undefined ? i + 1 : track.index + 1 }}</v-list-item-title>
       <v-list-item-subtitle>
-        {{ track.keySignatureName || 'C' }} | {{ track.notesCount }} notes | {{ track.keySignatureName ? '' : '' }}
+        {{ track.keySignatureName || 'C' }} | {{ track.notesCount }} notes
       </v-list-item-subtitle>
       <template #append>
         <span class="text-caption">{{ formatDuration(track.totalMs) }}</span>

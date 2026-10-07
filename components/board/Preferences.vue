@@ -1,5 +1,6 @@
 <template>
-  <v-expansion-panels v-model="open">
+  <v-sheet>
+    <v-expansion-panels v-model="open">
     <v-expansion-panel :title="t('board_pref_group_title_display')">
       <v-expansion-panel-text>
         <v-select
@@ -80,6 +81,7 @@
         </v-row>
       </v-expansion-panel-text>
     </v-expansion-panel>
+    </v-expansion-panels>
     <div class="preference-board-button-area mt-4">
       <div class="d-flex justify-space-between">
         <v-btn @click="reset">{{ t('board_pref_btn_reset_default') }}</v-btn>
@@ -94,7 +96,7 @@
         </v-btn>
       </div>
     </div>
-  </v-expansion-panels>
+  </v-sheet>
 </template>
 
 <script setup lang="ts">
@@ -119,14 +121,7 @@ const mode = useBoardPreference('modeMajor')
 const display = useBoardPreference('displayOptions')
 
 const modeItems = $getTranslatedModesOptions()
-const displayItems = computed(() => {
-  const opts = $getTranslatedDisplayOptions(U)
-  return opts.map((o: any) =>
-    o.value === 7 || o.label === 'board_display_option_Arpeggio' || o.label.includes('Arpeggio')
-      ? { ...o, label: '琶音' }
-      : o,
-  )
-})
+const displayItems = computed(() => $getTranslatedDisplayOptions(U))
 
 function reset() {
   store.resetPreferenceToDefault()

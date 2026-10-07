@@ -49,6 +49,7 @@ const emit = defineEmits(['update:modelValue'])
 
 const {
   $vexflow,
+  $vexflowFontsReady,
   $fifthsCircleModes,
   $getFifthsDisplayPitchSymbol,
   $getFifthsEnharmonicDisplayPitch,
@@ -117,15 +118,22 @@ function nodeStyleMinor(T: { major: string }) {
   const B = $fifthsCircleModes.indexOf(T.major)
   return nodeStyle(B, '--minor-radius')
 }
-function drawCoreStaff() {
+async function drawCoreStaff() {
   if (!coreStaffEl.value || !$vexflow) return
   coreStaffEl.value.innerHTML = ''
-  const { Factory } = $vexflow
-  const M = new Factory({ renderer: { elementId: coreStaffEl.value.id, width: 132, height: 88 } })
-  const T = M.System({ x: 6, y: -8, width: 120 }).addStave({ voices: [] })
-  T.addClef('treble')
-  if (value.value) T.addKeySignature(value.value)
-  M.draw()
+  try {
+    if ($vexflowFontsReady) {
+      await Promise.race([$vexflowFontsReady, new Promise((resolve) => setTimeout(resolve, 8000))])
+    }
+    const { Factory } = $vexflow
+    const M = new Factory({ renderer: { elementId: coreStaffEl.value.id, width: 132, height: 88 } })
+    const T = M.System({ x: 6, y: -8, width: 120 }).addStave({ voices: [] })
+    T.addClef('treble')
+    if (value.value) T.addKeySignature(value.value)
+    M.draw()
+  } catch (err) {
+    console.error('Failed to draw fifths circle staff:', err)
+  }
 }
 
 onMounted(() => {

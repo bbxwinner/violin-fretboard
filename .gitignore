@@ -16,8 +16,6 @@ __sitemap__
 _i18n
 _payload.json
 _nuxt/
-0400_Aspirin_sf2_file.js
-WebAudioFontPlayer.js
 site.webmanifest
 favicon.ico
 android-chrome-192x192.png
@@ -25,7 +23,7 @@ android-chrome-512x512.png
 apple-touch-icon.png
 favicon-16x16.png
 favicon-32x32.png
-[0-9][0-9][0-9][0-9]_*.js
+/[0-9][0-9][0-9][0-9]_*.js
 /ar/
 /bg/
 /ca/

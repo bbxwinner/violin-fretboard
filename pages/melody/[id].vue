@@ -62,7 +62,7 @@ const render = { height: 160 }
 
 const keys = computed(() => {
   const tracks = melody.value?.parsed?.tracks || []
-  const all = tracks.flatMap((t: any) => $getkeySignatureKeys(t.events || t.events || []))
+    const all = tracks.flatMap((t: any) => $getkeySignatureKeys(t.events || []))
   return all.length ? [...new Set(all)].map((k) => $getKeySignatureName(k)) : ['C']
 })
 
@@ -94,9 +94,9 @@ watch(
       if (!canvas) return
       try {
         const { Stave, StaveNote, Formatter, Renderer } = $vexflow
-        const ctx = Renderer.buildCanvasContext(canvas.width, canvas.height)
+        const ctx = Renderer.getCanvasContext(canvas, canvas.width, canvas.height)
         const stave = new Stave(20, 40, canvas.width - 40)
-        stave.addClef(melody.parsed?.mode === 'minor' ? 'treble' : 'treble').addTimeSignature('4/4')
+        stave.addClef('treble').addTimeSignature('4/4')
         stave.setContext(ctx).draw()
         const noteNames = track.events
           .filter((e: any) => e.type === 'noteOn' && e.velocity > 0)
@@ -115,12 +115,10 @@ watch(
 )
 
 function noteName(midi: number) {
-  const names = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
-  const idx = (midi - 60) % 12
-  const baseIdx = [0, 1, 3, 4, 5, 7, 8, 10][idx % 8]
-  const accidental = ['', '', '', '', '', 'b', 'b', ''][baseIdx % 8]
-  const midiOctave = Math.floor(midi / 12) - 1
-  return `${names[baseIdx]}${accidental}/${midiOctave}`
+  const names = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B']
+  const idx = ((midi % 12) + 12) % 12
+  const octave = Math.floor(midi / 12) - 1
+  return `${names[idx]}${octave}`
 }
 
 useHead({ title: () => melody.value?.name || 'Melody' })

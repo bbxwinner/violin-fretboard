@@ -1,11 +1,12 @@
 <template>
   <v-app>
     <v-app-bar elevation="2">
-      <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer">
+      <v-app-bar-nav-icon variant="text" @click.stop="drawer = !drawer" />
+      <v-app-bar-title>
         <NuxtLink to="/" class="no-style-link" @click="ga('title')">
           {{ t(appBarTitleKey) }}
         </NuxtLink>
-      </v-app-bar-nav-icon>
+      </v-app-bar-title>
       <v-menu>
         <template #activator="{ props }">
           <v-btn v-bind="props" variant="text" @click="ga('language_menu')">
@@ -38,7 +39,9 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer>
-    <NuxtPage />
+    <v-main>
+      <NuxtPage />
+    </v-main>
   </v-app>
 </template>
 

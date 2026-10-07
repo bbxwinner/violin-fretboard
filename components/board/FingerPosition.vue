@@ -86,10 +86,11 @@ const octaveHighlight = computed(() => {
   )
   const V = (pos.value.position.percentage - next.position.percentage) * store.preference.stringLength / 100
   const x = ['#d7bde2', '#aed6f1', '#a3e4d7', '#f9e79f', '#f5cba7', '#f5b7b1']
+  const octaveIndex = Math.max(0, Math.min(x.length - 1, pos.value.octave - 3))
   return {
     top: -(N / 2 - 20) + 'px',
     height: N / 2 + V / 2 + 'px',
-    backgroundColor: x[pos.value.octave - 3],
+    backgroundColor: x[octaveIndex],
   }
 })
 const circleClass = computed(() => ({
@@ -100,7 +101,6 @@ const circleClass = computed(() => ({
 }))
 
 function select() {
-  console.log(pos.value)
   store.setCurrentNote({ pitch: pos.value.pitch, octave: pos.value.octave })
 }
 </script>

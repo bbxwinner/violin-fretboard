@@ -1,0 +1,69 @@
+# 将 Nuxt 源码构建为静态站点并部署到 GitHub Pages
+#
+# 一次性设置（只需做一次）：
+#   仓库 Settings → Pages → Build and deployment → Source
+#   从 "Deploy from a branch" 改为 "GitHub Actions"
+#
+# 之后：向下方 branches 指定的源码分支 push，或到
+#   Actions → "Deploy to GitHub Pages" → Run workflow 手动触发
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [nuxt-source]   # ← 源码分支，如有改动请改成你的源码分支
+  workflow_dispatch:          # 允许在 Actions 页面手动触发
+
+# 同一时间只保留一个部署任务，新推送会取消旧的进行中任务
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pages: write        # deploy-pages 需要
+  id-token: write     # deploy-pages 需要（OIDC）
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate static site
+        run: npm run generate
+        env:
+          # 项目页 base：bbxwinner.github.io/violin-fretboard/
+          # 若改用自定义域名且站点在根路径部署，改为 /
+          NUXT_APP_BASE_URL: /violin-fretboard/
+          # 站点 URL（用于 sitemap / hreflang），i18n 会自动拼接 base 路径
+          # 若用自定义域名作为规范域名，改为 https://你的域名
+          NUXT_SITE_URL: https://bbxwinner.github.io
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .output/public
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages     # 与 Settings → Pages 的 GitHub Actions 来源对应
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

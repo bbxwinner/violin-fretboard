@@ -6,7 +6,7 @@ export function noteToMidi(name: string): number | null {
   const m = /^([A-Ga-g])(#{1,2}|b{1,2}|x{1,2}|)(-?\d+)$/.exec(name)
   if (!m) return null
   const letter = m[1].toUpperCase()
-  const u = (letter.charCodeAt(0) - 65 + 3) % 7
+  const u = (letter.charCodeAt(0) + 3) % 7
   let alt = 0
   for (const ch of m[2]) {
     if (ch === '#') alt++
