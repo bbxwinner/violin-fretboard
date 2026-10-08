@@ -15,10 +15,10 @@
           <span v-if="nthSemitone > 0" class="finger-position-octave-highlight-text">{{ pos.octave }}</span>
         </div>
         <div :class="circleClass" :style="opacityStyle" @click="select">
-          <div v-if="store.hasDisplayOption(0)">{{ $getDisplayPitch(pos.pitch) }}</div>
-          <div v-if="pos.altPitch && store.hasDisplayOption(0)">{{ $getDisplayPitch(pos.altPitch) }}</div>
-          <div v-if="store.hasDisplayOption(1)">{{ $getDisplaySolfege(pos.pitch) }}</div>
-          <div v-if="pos.altPitch && store.hasDisplayOption(1)">{{ $getDisplaySolfege(pos.altPitch) }}</div>
+          <div v-if="store.hasDisplayOption(0)">{{ $getDisplayPitch(display.main) }}</div>
+          <div v-if="display.alt && store.hasDisplayOption(0)">{{ $getDisplayPitch(display.alt) }}</div>
+          <div v-if="store.hasDisplayOption(1)">{{ $getDisplaySolfege(display.main) }}</div>
+          <div v-if="display.alt && store.hasDisplayOption(1)">{{ $getDisplaySolfege(display.alt) }}</div>
           <div v-if="store.hasDisplayOption(2)">{{ Math.round(pos.freq) }}</div>
         </div>
       </div>
@@ -37,7 +37,7 @@ const props = defineProps<{
 }>()
 
 const store = useBoardStore()
-const { $getPositionOnString, $getDisplayPitch, $getDisplaySolfege, $isNoteHiddenInCurrentMode } =
+const { $getPositionOnString, $getDisplayPitch, $getDisplaySolfege, $isNoteHiddenInCurrentMode, $getPreferredPitch } =
   useNuxtApp() as any
 
 const justFreq = computed(() => (store.preference.tuningJustIntonation ? props.strFreqJustIntonation : null))
@@ -45,6 +45,12 @@ const justFreq = computed(() => (store.preference.tuningJustIntonation ? props.s
 const pos = computed(() =>
   $getPositionOnString(props.nthSemitone, props.strPitch, props.strFreq, props.strOctave, justFreq.value),
 )
+
+const display = computed(() => {
+  const preferred = $getPreferredPitch(pos.value.pitch, pos.value.altPitch, store.preference.modeMajor)
+  if (preferred === null) return { main: pos.value.pitch, alt: pos.value.altPitch }
+  return { main: preferred, alt: null }
+})
 
 const offset = computed(() => props.strThickness / 2)
 const style = computed(() => ({

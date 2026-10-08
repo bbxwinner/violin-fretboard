@@ -11,6 +11,13 @@
           v-model="mode"
         />
         <v-select
+          :label="t('board_theme')"
+          :items="themeItems"
+          item-title="label"
+          item-value="value"
+          v-model="theme"
+        />
+        <v-select
           v-model="display"
           :items="displayItems"
           item-title="label"
@@ -18,6 +25,22 @@
           chips
           multiple
         />
+        <v-row class="mt-2">
+          <v-col cols="4"><span class="text-caption">{{ t('board_pref_board_width') }}</span></v-col>
+          <v-col cols="8">
+            <v-slider v-model="boardW" :min="100" :max="320" step="5" thumb-label>
+              <template #thumb-label="{ modelValue }">{{ modelValue }}px</template>
+            </v-slider>
+          </v-col>
+        </v-row>
+        <v-row>
+          <v-col cols="4"><span class="text-caption">{{ t('board_pref_note_font_size') }}</span></v-col>
+          <v-col cols="8">
+            <v-slider v-model="font" :min="8" :max="24" step="0.2" thumb-label>
+              <template #thumb-label="{ modelValue }">{{ modelValue }}px</template>
+            </v-slider>
+          </v-col>
+        </v-row>
         <v-btn
           :color="store.isPlayingArpeggio ? 'error' : 'primary'"
           variant="elevated"
@@ -101,7 +124,7 @@
 
 <script setup lang="ts">
 import { U } from '../../utils/music'
-import { useBoardPreference } from '../../composables/useBoardPreference'
+import { useBoardPreference, useThemePreference } from '../../composables/useBoardPreference'
 
 defineProps<{ isMobile?: boolean }>()
 defineEmits(['done'])
@@ -119,9 +142,16 @@ const vol = useBoardPreference('volume')
 const dur = useBoardPreference('noteDuration')
 const mode = useBoardPreference('modeMajor')
 const display = useBoardPreference('displayOptions')
+const theme = useBoardPreference('theme')
+const boardW = useThemePreference('boardWidth')
+const font = useThemePreference('noteFontSize')
 
 const modeItems = $getTranslatedModesOptions()
 const displayItems = computed(() => $getTranslatedDisplayOptions(U))
+const themeItems = [
+  { label: t('board_theme_classic'), value: 'classic' },
+  { label: t('board_theme_antique'), value: 'antique' },
+]
 
 function reset() {
   store.resetPreferenceToDefault()

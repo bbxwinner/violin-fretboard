@@ -26,3 +26,17 @@ export function useBoardPreference(key: string) {
     },
   })
 }
+
+export function useThemePreference(key: string) {
+  const store = useBoardStore()
+  return computed({
+    get: () => (store.preference as any)[key][store.preference.theme],
+    set: (n) => {
+      const app: any = useNuxtApp()
+      const pref = store.preference as any
+      store.setPreference(key, { ...pref[key], [pref.theme]: n })
+      store.savePreferenceLocalStorage()
+      app.$sendGAClickPreferenceEvent(`pref_${key}_${pref.theme}_${n}`)
+    },
+  })
+}

@@ -12,6 +12,9 @@ const Qe = {
   fingerPositionLabelColor: {} as Record<string, number>,
   volume: 80,
   noteDuration: 500,
+  theme: 'classic',
+  boardWidth: { classic: 160, antique: 300 },
+  noteFontSize: { classic: 12.8, antique: 16 },
 }
 const et = 'preference'
 const Ie = Math.pow(2, 7 / 12)
@@ -49,11 +52,12 @@ export const useBoardStore = defineStore('board', {
     },
     strings: (e) => {
       const t = e.preference.pitchStandard
+      const s = e.preference.boardWidth[e.preference.theme] / 160
       return [
-        { pitch: 'G', freq: t / Ie / Ie, freqJustIntonation: (t * 4) / 9, thickness: 4, octave: 3 },
-        { pitch: 'D', freq: t / Ie, freqJustIntonation: (t * 2) / 3, thickness: 3, octave: 4 },
-        { pitch: 'A', freq: t, freqJustIntonation: t, thickness: 2, octave: 4 },
-        { pitch: 'E', freq: t * Ie, freqJustIntonation: (t * 3) / 2, thickness: 1, octave: 5 },
+        { pitch: 'G', freq: t / Ie / Ie, freqJustIntonation: (t * 4) / 9, thickness: 4, octave: 3, fanOffset: 26.4 * s },
+        { pitch: 'D', freq: t / Ie, freqJustIntonation: (t * 2) / 3, thickness: 3, octave: 4, fanOffset: 8.8 * s },
+        { pitch: 'A', freq: t, freqJustIntonation: t, thickness: 2, octave: 4, fanOffset: -8.8 * s },
+        { pitch: 'E', freq: t * Ie, freqJustIntonation: (t * 3) / 2, thickness: 1, octave: 5, fanOffset: -26.4 * s },
       ]
     },
     currentArpeggioPitches: (e) => getArpeggioPitchesFromMode(e.preference.modeMajor),
@@ -113,6 +117,36 @@ export const useBoardStore = defineStore('board', {
             typeof t.noteDuration === 'number' && t.noteDuration >= 100 && t.noteDuration <= 2e3
               ? t.noteDuration
               : n.noteDuration,
+          theme: ['classic', 'antique'].includes(t.theme) ? t.theme : n.theme,
+          boardWidth: (() => {
+            const v = t.boardWidth
+            const def = n.boardWidth
+            if (v && typeof v === 'object')
+              return {
+                classic:
+                  typeof v.classic === 'number' && v.classic >= 100 && v.classic <= 320 ? v.classic : def.classic,
+                antique:
+                  typeof v.antique === 'number' && v.antique >= 100 && v.antique <= 320 ? v.antique : def.antique,
+              }
+            if (typeof v === 'number' && v >= 100 && v <= 320) return { classic: v, antique: def.antique }
+            return { ...def }
+          })(),
+          noteFontSize: (() => {
+            const v = t.noteFontSize
+            const def = n.noteFontSize
+            if (v && typeof v === 'object')
+              return {
+                classic:
+                  typeof v.classic === 'number' && v.classic >= 8 && v.classic <= 24 ? v.classic : def.classic,
+                antique:
+                  typeof v.antique === 'number' && v.antique >= 8 && v.antique <= 24 ? v.antique : def.antique,
+              }
+            if (typeof v === 'number') {
+              if (v >= 0.5 && v <= 2) return { classic: v * 12.8, antique: def.antique }
+              if (v >= 8 && v <= 24) return { classic: v, antique: def.antique }
+            }
+            return { ...def }
+          })(),
         }
         this.preference = a
       } catch (err) {

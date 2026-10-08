@@ -30,6 +30,20 @@ export default defineNuxtPlugin(() => {
         return `${n}${o}`
       },
       getAltPitch: rh,
+      getPreferredPitch: (i: string, n: string | null, mode: string | null) => {
+        if (!n) return i
+        if (!mode) return null
+        const key = __mmToKey(mode)
+        if (!key) return i
+        const pitches = Es[key].pitches
+        if (pitches.includes(i)) return i
+        if (pitches.includes(n)) return n
+        const sharps = pitches.filter((p) => p.includes('#')).length
+        const flats = pitches.filter((p) => p.includes('b')).length
+        if (sharps > flats) return i
+        if (flats > sharps) return n
+        return i
+      },
       getFrequency: (i: number, n: string, o: number) => i * Math.pow(sh, oC('A', 4, n, o)),
       getPositionOnString: (i: number, n: string, o: number, a: number, s?: number) => {
         const r = o * Math.pow(sh, i)

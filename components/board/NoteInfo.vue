@@ -8,10 +8,10 @@
         <v-col :cols="isMobile ? 6 : 8">
           <div v-if="info">
             <h2>
-              {{ $getDisplayPitch(info.pitch) + ' ' }}<span v-if="info.altPitch">/ {{ $getDisplayPitch(info.altPitch) }}</span><v-chip class="note-info-octave-label">{{ info.octave }}</v-chip>
+              {{ $getDisplayPitch(displayInfo.main) + ' ' }}<span v-if="displayInfo.alt">/ {{ $getDisplayPitch(displayInfo.alt) }}</span><v-chip class="note-info-octave-label">{{ info.octave }}</v-chip>
             </h2>
             <h3>
-              {{ $getDisplaySolfege(info.pitch) + ' ' }}<span v-if="info.altPitch">/ {{ $getDisplaySolfege(info.altPitch) }}</span>
+              {{ $getDisplaySolfege(displayInfo.main) + ' ' }}<span v-if="displayInfo.alt">/ {{ $getDisplaySolfege(displayInfo.alt) }}</span>
             </h3>
             <div>{{ Math.round(info.freq * 1e6) / 1e6 }} Hz </div>
           </div>
@@ -39,12 +39,19 @@ import { __mmToKey } from '../../utils/music'
 const props = defineProps<{ isMobile?: boolean }>()
 
 const store = useBoardStore()
-const { $vexflow, $vexflowFontsReady, $getDisplayPitch, $getDisplaySolfege, $isNoteHiddenInCurrentMode, $getPurePitchInCurrentMode } =
+const { $vexflow, $vexflowFontsReady, $getDisplayPitch, $getDisplaySolfege, $isNoteHiddenInCurrentMode, $getPurePitchInCurrentMode, $getPreferredPitch } =
   useNuxtApp() as any
 
 const show = ref(false)
 const sheet = ref(false)
 const info = computed(() => store.currentNoteInfo)
+const displayInfo = computed(() => {
+  const i = info.value
+  if (!i) return null
+  const preferred = $getPreferredPitch(i.pitch, i.altPitch, store.preference.modeMajor)
+  if (preferred === null) return { main: i.pitch, alt: i.altPitch }
+  return { main: preferred, alt: null }
+})
 const vfRef = ref<HTMLElement | null>(null)
 let renderToken = 0
 

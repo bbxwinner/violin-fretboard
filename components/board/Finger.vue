@@ -1,21 +1,41 @@
 <template>
-  <v-card class="fingerboard">
+  <v-card class="fingerboard" :class="themeClass" :style="cardStyle">
     <VioolStringLabel :is-left="true" />
-    <VioolString
-      v-for="s in store.strings"
-      :key="s.pitch"
-      :pitch="s.pitch"
-      :thickness="s.thickness"
-      :freq="s.freq"
-      :octave="s.octave"
-      :freq-just-intonation="s.freqJustIntonation"
-    />
+    <div class="fingerboard-strings">
+      <div class="vf-string-row">
+        <VioolString
+          v-for="s in store.strings"
+          :key="s.pitch"
+          :pitch="s.pitch"
+          :thickness="s.thickness"
+          :freq="s.freq"
+          :octave="s.octave"
+          :freq-just-intonation="s.freqJustIntonation"
+          :fan-offset="s.fanOffset"
+        />
+      </div>
+    </div>
     <VioolStringLabel :is-left="false" />
   </v-card>
 </template>
 
 <script setup lang="ts">
 const store = useBoardStore()
+const themeClass = computed(() => (store.preference.theme === 'antique' ? 'fingerboard--antique' : ''))
+const cardStyle = computed(() => {
+  const theme = store.preference.theme
+  const antique = theme === 'antique'
+  const scale = store.preference.boardWidth[theme] / 160
+  const unit = (antique ? 11 : 20) * scale
+  const font = store.preference.noteFontSize[theme]
+  const style: Record<string, string> = {
+    '--unit-size': unit + 'px',
+    '--unit-double-size': unit * 2 + 'px',
+    '--vf-string-slot': 40 * scale + 'px',
+    '--vf-note-font': font + 'px',
+  }
+  return style
+})
 const eo = 4
 
 let startX: number | null = null

@@ -156,8 +156,10 @@ watch(
   font-size: 80%;
   margin-top: 8px;
 }
-.string-label-container {
+.string-container.string-label-container {
+  margin: 0 4px;
   position: relative;
+  width: 60px;
 }
 .finger-position {
   position: absolute;
@@ -179,7 +181,7 @@ watch(
   cursor: pointer;
   display: flex;
   flex-direction: column;
-  font-size: 80%;
+  font-size: var(--vf-note-font, 80%);
   height: var(--unit-double-size);
   justify-content: space-evenly;
   line-height: 0%;
@@ -212,8 +214,8 @@ watch(
 .string-container {
   display: flex;
   flex-direction: row;
-  margin: 0 4px;
-  width: 60px;
+  margin: 0;
+  width: var(--vf-string-slot, 40px);
 }
 .string-container .string-space {
   width: 50%;
@@ -226,6 +228,65 @@ watch(
   flex-direction: row;
   justify-content: center;
   padding: 40px 0;
+}
+.fingerboard-strings {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.vf-string-row {
+  display: flex;
+  flex-direction: row;
+}
+.fingerboard.fingerboard--antique {
+  --vf-string-color: #c0c0c0;
+}
+.fingerboard.fingerboard--antique .vf-string-row {
+  position: relative;
+}
+.fingerboard.fingerboard--antique .vf-string-row::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-color: #24150a;
+  background-image:
+    radial-gradient(ellipse at 32% 18%, #3d2515 0%, #24150a 62%, #150b05 100%),
+    repeating-linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.28) 0 2px,
+      rgba(255, 255, 255, 0.02) 2px 4px,
+      rgba(0, 0, 0, 0) 4px 9px
+    ),
+    repeating-linear-gradient(
+      3deg,
+      rgba(90, 55, 28, 0.1) 0 9px,
+      rgba(0, 0, 0, 0) 9px 17px
+    );
+  clip-path: polygon(22.03% 0%, 77.97% 0%, 100% 100%, 0% 100%);
+}
+.fingerboard.fingerboard--antique .vf-string-row > .string-container {
+  position: relative;
+  z-index: 1;
+}
+.fingerboard.fingerboard--antique .finger-position-circle {
+  background-color: #24150a;
+  border-color: #fff;
+  color: #fff;
+}
+.fingerboard.fingerboard--antique .finger-position-circle-standard {
+  background-color: #24150a;
+  border-color: rgba(255, 255, 255, 0.55);
+}
+.fingerboard.fingerboard--antique .finger-position-circle-piano-black {
+  background-color: #24150a;
+  border-color: #fff;
+  color: #fff;
+}
+.fingerboard.fingerboard--antique .finger-position-circle-highlighted {
+  background-color: #ffd700;
+  border-color: #ffd700;
+  color: #000;
 }
 .info-mobile .info-fixed {
   background-color: #fff;
