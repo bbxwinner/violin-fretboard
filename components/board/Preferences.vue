@@ -51,10 +51,10 @@
         >
           {{
             store.isPlayingArpeggio
-              ? '⏹ 停止播放琶音'
+              ? `⏹ ${t('board_arpeggio_stop')}`
               : mode
-                ? '▶ 播放当前调性琶音'
-                : '▶ 请先选择调性以播放琶音'
+                ? `▶ ${t('board_arpeggio_play')}`
+                : `▶ ${t('board_arpeggio_select_key')}`
           }}
         </v-btn>
       </v-expansion-panel-text>
