@@ -1,7 +1,7 @@
 import { __mmToKey, Es, sh, wu, rh, iC, mg, nC, oC } from '../utils/music'
 
 export default defineNuxtPlugin(() => {
-  const t = (key: string, params?: Record<string, unknown>) => {
+  const t = (key: string, params: Record<string, unknown> = {}) => {
     const { t: translate } = useI18n()
     return translate(key, params)
   }
@@ -9,12 +9,13 @@ export default defineNuxtPlugin(() => {
     provide: {
       getTranslatedModesOptions: () => [
         { label: t('board_unspecified'), value: null },
-        ...Object.keys(Es).flatMap((i) => {
-          const n = t('board_note_major', { note: wu(i) })
-          const o = t('board_note_minor', { note: wu(Es[i].relativeMinor) })
+        ...(Object.keys(Es) as (keyof typeof Es)[]).flatMap((key) => {
+          const entry = Es[key]
+          const n = t('board_note_major', { note: wu(key) })
+          const o = t('board_note_minor', { note: wu(entry.relativeMinor).toLowerCase() })
           return [
-            { label: n, value: i },
-            { label: o, value: Es[i].relativeMinor.toLowerCase() },
+            { label: n, value: key },
+            { label: o, value: entry.relativeMinor.toLowerCase() },
           ]
         }),
       ],
@@ -25,8 +26,8 @@ export default defineNuxtPlugin(() => {
           .map((o) => ({ label: t('board_display_option_' + o[1]), value: o[0] })),
       getDisplayPitch: wu,
       getDisplaySolfege: (i: string) => {
-        const n = iC[i.substr(0, 1)]
-        const o = mg[i.substr(-1)] || ''
+        const n = iC[i.charAt(0) as keyof typeof iC]
+        const o = mg[i.charAt(i.length - 1) as keyof typeof mg] || ''
         return `${n}${o}`
       },
       getAltPitch: rh,
@@ -35,7 +36,7 @@ export default defineNuxtPlugin(() => {
         if (!mode) return null
         const key = __mmToKey(mode)
         if (!key) return i
-        const pitches = Es[key].pitches
+        const pitches = Es[key as keyof typeof Es].pitches
         if (pitches.includes(i)) return i
         if (pitches.includes(n)) return n
         const sharps = pitches.filter((p) => p.includes('#')).length
@@ -70,12 +71,12 @@ export default defineNuxtPlugin(() => {
       },
       isNoteHiddenInCurrentMode: (i: string, n: string, o: string | null) => {
         if (!o) return false
-        const a = Es[__mmToKey(o)].pitches
+        const a = Es[__mmToKey(o) as keyof typeof Es].pitches
         return !(a.includes(i) || a.includes(n))
       },
       getPurePitchInCurrentMode: (i: string, n: string, o: string | null) => {
         if (!o) return null
-        const a = Es[__mmToKey(o)].pitches
+        const a = Es[__mmToKey(o) as keyof typeof Es].pitches
         return a.includes(i) ? i.substr(0, 1) : n && a.includes(n) ? n.substr(0, 1) : null
       },
     },

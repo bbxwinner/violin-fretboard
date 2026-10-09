@@ -54,26 +54,26 @@ export const U = {
   7: 'Arpeggio',
 }
 
-export function __mmToKey(t) {
+export function __mmToKey(t: string | null): keyof typeof Es | null {
   if (!t) return null
-  if (Es[t]) return t
-  const m = Object.entries(Es).find((e) => e[1].relativeMinor.toLowerCase() === t)
-  return m ? m[0] : null
+  if (t in Es) return t as keyof typeof Es
+  const m = Object.entries(Es).find(([, v]) => v.relativeMinor.toLowerCase() === t)
+  return m ? (m[0] as keyof typeof Es) : null
 }
-export function wu(t) {
-  const e = mg[t.substr(-1)] || ''
-  return `${t.substr(0, 1)}${e}`
+export function wu(t: string): string {
+  const e = mg[t.charAt(t.length - 1) as keyof typeof mg] || ''
+  return `${t.charAt(0)}${e}`
 }
-export function rh(t) {
-  return eC[t] || null
+export function rh(t: string): string | null {
+  return (eC as Record<string, string | undefined>)[t] || null
 }
-export function nC(t, e, i) {
-  let o = Xn.indexOf(t) + i
+export function nC(t: string, e: number, i: number): [string, number] {
+  const o = Xn.indexOf(t) + i
   const a = e + Math.floor(o / Xn.length)
-  return [Xn[o % Xn.length], a]
+  return [Xn[o % Xn.length] as string, a]
 }
-export function oC(t, e, i, n) {
+export function oC(t: string, e: number, i: string, n: number): number {
   const o = Xn.indexOf(t)
-  let s = Xn.indexOf(i) - o
+  const s = Xn.indexOf(i) - o
   return (n - e) * Xn.length + s
 }

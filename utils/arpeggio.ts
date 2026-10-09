@@ -21,9 +21,9 @@ export function noteToMidi(name: string): number | null {
 export function getArpeggioPitchesFromMode(m: string | null): string[] {
   if (!m) return []
   const k = __mmToKey(m)
-  if (!k || !Es[k]) return []
+  if (!k) return []
   const scale = Es[k].pitches
-  if (Es[m]) {
+  if (m in Es) {
     return [scale[0], scale[2], scale[4]]
   }
   const rootStr = m.toUpperCase()

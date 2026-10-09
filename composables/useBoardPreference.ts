@@ -14,8 +14,9 @@ export function useBoardPreference(key: string) {
         const f = new Set(n)
         const o = [...f].filter((s) => !u.has(s))
         const s = [...u].filter((s) => !f.has(s))
-        if (o.length > 0) r = `add_${o.map((s) => U[s as number]).join('_')}`
-        if (s.length > 0) r = (r ? r + ',' : '') + `rm_${s.map((s) => U[s as number]).join('_')}`
+        const uMap = U as Record<number, string>
+        if (o.length > 0) r = `add_${o.map((s) => uMap[s as number]).join('_')}`
+        if (s.length > 0) r = (r ? r + ',' : '') + `rm_${s.map((s) => uMap[s as number]).join('_')}`
       }
       store.setPreference(key, n)
       store.savePreferenceLocalStorage()

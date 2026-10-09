@@ -85,7 +85,7 @@ const paths = computed(() => [
 watch(drawer, (w) => ga('drawer_' + w))
 
 function selectLocale(code: string) {
-  setLocale(code)
+  setLocale(code as Parameters<typeof setLocale>[0])
   ga('language_set_' + code)
 }
 function drawerTo(key: string) {

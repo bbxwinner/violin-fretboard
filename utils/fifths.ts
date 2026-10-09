@@ -185,8 +185,8 @@ export function fifthsCircleModes(): string[] {
       })
     return s[0] || null
   }
-  const i = Array.from({ length: 7 }, (o, a) => e('#', a)).filter(Boolean)
-  const n = Array.from({ length: 5 }, (o, a) => e('b', 5 - a)).filter(Boolean)
+  const i = Array.from({ length: 7 }, (o, a) => e('#', a)).filter((v): v is string => v !== null)
+  const n = Array.from({ length: 5 }, (o, a) => e('b', 5 - a)).filter((v): v is string => v !== null)
   return [...i, ...n]
 }
 

@@ -53,10 +53,9 @@ export const ur = {
   'A#7': { freq: 3729.31, midi: 106, alt: 'Bb7', type: 'b', octave: 3 },
   B7: { freq: 3951.07, midi: 107, name: 'si', type: 'w', octave: 3 },
 }
-export const hg = {}
+export const hg: Record<number, string> = {}
 for (const t in ur) {
-  const e = ur[t].midi
-  hg[e] = t
+  hg[(ur as Record<string, { midi: number }>)[t].midi] = t
 }
 export const Tu = [
   [

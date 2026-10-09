@@ -39,7 +39,7 @@ export function getMelodyTrackNumNotes(events: any[]) {
 }
 
 export function getKeySignatureName(key: string) {
-  const i = Cl[key]
+  const i = (Cl as Record<string, { name: string; type: string }>)[key]
   return i.name.replace(/b/, '♭').replace('#', '♯') + ' ' + (i.type === 'major' ? '大調' : '小調')
 }
 
@@ -60,7 +60,7 @@ export function getFlattenFingerboard() {
   const e = []
   for (let i = 0; i < Tu[0].length; i++) {
     const n = []
-    for (let o = 0; o < 4; o++) n.push({ ...Tu[o][i], info: ur[Tu[o][i].key] })
+    for (let o = 0; o < 4; o++) n.push({ ...Tu[o][i], info: (ur as Record<string, unknown>)[Tu[o][i].key] })
     e.push(n)
   }
   return e
@@ -71,5 +71,5 @@ export function midiToNote(midi: number) {
 }
 
 export function getNoteDetail(note: string) {
-  return ur[note]
+  return (ur as Record<string, unknown>)[note]
 }

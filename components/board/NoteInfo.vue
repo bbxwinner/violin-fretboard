@@ -3,10 +3,10 @@
     <v-sheet v-if="show">
       <v-row class="vf-row-container">
         <v-col cols="4" class="vf-container">
-          <div :ref="vfRef" :id="'vfBoard-' + (isMobile ? 'm' : 'd')" />
+          <div :ref="setVfRef" :id="'vfBoard-' + (isMobile ? 'm' : 'd')" />
         </v-col>
         <v-col :cols="isMobile ? 6 : 8">
-          <div v-if="info">
+          <div v-if="info && displayInfo">
             <h2>
               {{ $getDisplayPitch(displayInfo.main) + ' ' }}<span v-if="displayInfo.alt">/ {{ $getDisplayPitch(displayInfo.alt) }}</span><v-chip class="note-info-octave-label">{{ info.octave }}</v-chip>
             </h2>
@@ -52,7 +52,10 @@ const displayInfo = computed(() => {
   if (preferred === null) return { main: i.pitch, alt: i.altPitch }
   return { main: preferred, alt: null }
 })
-const vfRef = ref<HTMLElement | null>(null)
+let vfEl: HTMLDivElement | null = null
+const setVfRef = (el: unknown) => {
+  vfEl = el as HTMLDivElement | null
+}
 let renderToken = 0
 
 function withTimeout(p: Promise<unknown>, ms: number): Promise<unknown> {
@@ -69,7 +72,7 @@ function draw(note: any) {
 async function renderStaff(note: any) {
   const token = ++renderToken
   const id = 'vfBoard-' + (props.isMobile ? 'm' : 'd')
-  const el = vfRef.value || document.getElementById(id)
+  const el = vfEl || document.getElementById(id)
   if (!el) return
   try {
     if ($vexflowFontsReady) await withTimeout($vexflowFontsReady, 8000)
@@ -130,7 +133,8 @@ async function renderStaff(note: any) {
       de.push(y.voice(y.notes(X), { time: '1/4' }))
     }
     const O = T.addStave({ voices: de }).addClef('treble')
-    if (store.preference.modeMajor) O.addKeySignature(__mmToKey(store.preference.modeMajor))
+    const key = __mmToKey(store.preference.modeMajor)
+    if (key) O.addKeySignature(key)
     D.draw()
   } catch (err) {
     console.error('Failed to render staff:', err)

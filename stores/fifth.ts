@@ -3,7 +3,9 @@ const xt = 640
 const It = 120
 const Ot = 2200
 const se = [1, 2, 3, 4, 5, 6, 7]
-const J = {
+type Range = { startRow: number; endRow: number }
+
+const J: Record<number, Range> = {
   1: { startRow: 0, endRow: 7 },
   2: { startRow: 3, endRow: 9 },
   3: { startRow: 5, endRow: 11 },
@@ -12,8 +14,6 @@ const J = {
   6: { startRow: 12, endRow: 19 },
   7: { startRow: 14, endRow: 21 },
 }
-
-type Range = { startRow: number; endRow: number }
 
 function Q(): Record<number, Range> {
   return se.reduce((e, o) => {
@@ -104,10 +104,12 @@ export const useFifthStore = defineStore('fifth', {
       try {
         const o = JSON.parse(e)
         if (typeof o?.selectedMode === 'string' && o.selectedMode) this.selectedMode = o.selectedMode
-        if (Array.isArray(o?.visibleHandPositions))
-          this.visibleHandPositions = Array.from(
-            new Set(o.visibleHandPositions.filter((t: unknown) => Number.isInteger(t) && Number(t) > 0)),
-          ).sort((t: number, n: number) => Number(t) - Number(n))
+        if (Array.isArray(o?.visibleHandPositions)) {
+          const parsed = (o.visibleHandPositions as unknown[]).filter(
+            (t): t is number => Number.isInteger(t) && Number(t) > 0,
+          )
+          this.visibleHandPositions = Array.from(new Set(parsed)).sort((a, b) => a - b)
+        }
         if (typeof o?.fingerOverlayTransitionMs === 'number')
           this.fingerOverlayTransitionMs = ye(o.fingerOverlayTransitionMs)
         if (o?.handPositionRanges && typeof o.handPositionRanges === 'object') {

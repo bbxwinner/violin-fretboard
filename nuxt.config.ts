@@ -3,6 +3,11 @@ import vuetify from 'vite-plugin-vuetify'
 export default defineNuxtConfig({
   ssr: true,
 
+  experimental: {
+    // 关闭实验性的 app-manifest（dev 下会产生 "#app-manifest" 无法解析的 pre-transform 告警；对静态站无副作用）
+    appManifest: false,
+  },
+
   css: [
     'vuetify/styles',
     '@mdi/font/css/materialdesignicons.css',
@@ -13,12 +18,12 @@ export default defineNuxtConfig({
   },
 
   components: [
-    { path: '~/components', prefix: true },
-    { path: '~/components/board', prefix: false },
+    { path: '~/components' },
+    { path: '~/components/board', prefix: '' },
   ],
 
   vite: {
-    plugins: [vuetify({ autoImport: true })],
+    plugins: [vuetify()],
     ssr: { noExternal: ['vuetify'] },
   },
 
@@ -81,7 +86,6 @@ export default defineNuxtConfig({
       { code: 'zh-cn', name: '简体中文', language: 'zh-cn', file: 'zh-cn.json' },
       { code: 'zh-tw', name: '繁體中文', language: 'zh-tw', file: 'zh-tw.json' },
     ],
-    lazy: true,
   },
 
   app: {
@@ -101,10 +105,6 @@ export default defineNuxtConfig({
         },
       ],
     },
-  },
-
-  sitemap: {
-    siteUrl: process.env.NUXT_SITE_URL || 'https://bbxwinner.github.io',
   },
 
   site: {

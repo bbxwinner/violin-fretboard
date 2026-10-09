@@ -36,9 +36,9 @@ export const Cl = {
   Bb1: { name: 'Bb', type: 'minor', notes: ['Bb', 'C', 'Db', 'Eb', 'F', 'Gb', 'Ab'], midi: { key: -5, scale: 1 } },
   B1: { name: 'B', type: 'minor', notes: ['B', 'C#', 'D', 'E', 'F#', 'G', 'A'], midi: { key: 2, scale: 1 } },
 }
-export const ga = {}
+export const ga: Record<number, Record<number, string>> = {}
 for (const t in Cl) {
-  const e = Cl[t]
+  const e = (Cl as Record<string, { midi: { key: number; scale: number } }>)[t]
   const { key: i, scale: n } = e.midi
   ga[i] || (ga[i] = {})
   ga[i][n] = t

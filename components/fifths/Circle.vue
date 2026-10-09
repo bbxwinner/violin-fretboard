@@ -20,7 +20,7 @@
       v-for="(T, B) in nodes"
       :key="T.major"
       :class="['fifths-circle-node-major', { 'fifths-circle-node-major-active': T.major === modelValue }]"
-      :style="nodeStyle(B, '--major-radius')"
+      :style="nodeStyle(Number(B), '--major-radius')"
       type="button"
       @click="setMode(T.major)"
     >

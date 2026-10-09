@@ -16,7 +16,7 @@
             density="compact"
             hide-details
             class="fifths-pref-checkbox fifths-position-visibility"
-            @update:model-value="(v: boolean) => store.setHandPositionVisible(r, !!v)"
+            @update:model-value="(v: boolean | null) => store.setHandPositionVisible(r, !!v)"
           />
           <v-text-field
             :model-value="rangeFor(r).startRow"

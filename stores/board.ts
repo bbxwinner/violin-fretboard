@@ -2,6 +2,8 @@ import { defineStore } from 'pinia'
 import { getArpeggioPitchesFromMode, noteToMidi } from '../utils/arpeggio'
 import { U, DP } from '../utils/music'
 
+export type BoardTheme = 'classic' | 'antique'
+
 const Qe = {
   stringLength: 1500,
   modeMajor: null as string | null,
@@ -12,9 +14,9 @@ const Qe = {
   fingerPositionLabelColor: {} as Record<string, number>,
   volume: 80,
   noteDuration: 500,
-  theme: 'classic',
-  boardWidth: { classic: 160, antique: 300 },
-  noteFontSize: { classic: 12.8, antique: 16 },
+  theme: 'classic' as BoardTheme,
+  boardWidth: { classic: 160, antique: 300 } as Record<BoardTheme, number>,
+  noteFontSize: { classic: 12.8, antique: 16 } as Record<BoardTheme, number>,
 }
 const et = 'preference'
 const Ie = Math.pow(2, 7 / 12)

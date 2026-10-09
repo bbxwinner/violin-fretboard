@@ -22,7 +22,7 @@
       <v-row>
         <v-col v-for="(track, i) in melody.parsed?.tracks || []" :key="i" cols="12" md="6">
           <v-card class="mb-4">
-            <v-card-title>Track {{ i + 1 }}</v-card-title>
+            <v-card-title>Track {{ Number(i) + 1 }}</v-card-title>
             <v-card-text>
               <client-only>
                 <canvas ref="staffRefs" class="staff" :width="480" :height="render.height" />
@@ -63,7 +63,7 @@ const render = { height: 160 }
 const keys = computed(() => {
   const tracks = melody.value?.parsed?.tracks || []
     const all = tracks.flatMap((t: any) => $getkeySignatureKeys(t.events || []))
-  return all.length ? [...new Set(all)].map((k) => $getKeySignatureName(k)) : ['C']
+  return all.length ? [...new Set(all)].map((k) => $getKeySignatureName(String(k))) : ['C']
 })
 
 function trackSummary(track: any) {
@@ -94,7 +94,7 @@ watch(
       if (!canvas) return
       try {
         const { Stave, StaveNote, Formatter, Renderer } = $vexflow
-        const ctx = Renderer.getCanvasContext(canvas, canvas.width, canvas.height)
+        const ctx = Renderer.getCanvasContext(canvas as unknown as string, canvas.width, canvas.height)
         const stave = new Stave(20, 40, canvas.width - 40)
         stave.addClef('treble').addTimeSignature('4/4')
         stave.setContext(ctx).draw()
