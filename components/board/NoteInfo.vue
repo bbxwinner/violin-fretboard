@@ -16,19 +16,21 @@
             <div>{{ Math.round(info.freq * 1e6) / 1e6 }} Hz </div>
           </div>
         </v-col>
-        <v-col v-if="isMobile" cols="2" class="d-flex flex-column">
-          <v-btn icon="mdi-cog" @click="sheet = true" />
-          <v-btn icon="mdi-close" @click="show = false" />
-        </v-col>
       </v-row>
     </v-sheet>
-    <v-bottom-sheet v-if="isMobile" v-model="sheet">
+    <!-- 移动端信息条的操作按钮：fixed 定位（同 .fixed-cog-icon），
+         避免 v-col/v-row 负边距吃掉间距导致按钮贴边、相互紧贴 -->
+    <div v-if="isMobile && show" class="vf-sheet-actions">
+      <v-btn icon="mdi-cog" @click="sheet = true" />
+      <v-btn icon="mdi-close" @click="show = false" />
+    </div>
+    <v-dialog v-if="isMobile" v-model="sheet">
       <v-card>
         <v-card-text>
           <preferences :is-mobile="true" @done="sheet = false" />
         </v-card-text>
       </v-card>
-    </v-bottom-sheet>
+    </v-dialog>
     <v-btn v-if="isMobile && !show" class="fixed-cog-icon" icon="mdi-cog" @click="sheet = true" />
   </div>
 </template>

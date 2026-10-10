@@ -145,6 +145,17 @@ watch(
 .vf-row-container {
   margin-top: 0;
 }
+/* 移动端信息条的操作按钮组（齿轮/关闭）：fixed 定位在右下角，
+   与屏幕下/右边框保持 12px，两按钮间距 12px；z-index 高于信息条(10) */
+.vf-sheet-actions {
+  bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  position: fixed;
+  right: 12px;
+  z-index: 11;
+}
 .finger-position-label {
   cursor: pointer;
   height: 10px;
