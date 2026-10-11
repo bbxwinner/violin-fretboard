@@ -102,7 +102,8 @@ const octaveHighlight = computed(() => {
 const circleClass = computed(() => ({
   'finger-position-circle': true,
   'finger-position-circle-piano-black': pos.value.altPitch && store.hasDisplayOption(6),
-  'finger-position-circle-arpeggio': isArpeggioNote.value,
+  // 当前激活（点击/播放）的音名始终用黄色高亮，不被琶音橙色覆盖
+  'finger-position-circle-arpeggio': isArpeggioNote.value && !isActive.value,
   'finger-position-circle-highlighted': isActive.value,
 }))
 

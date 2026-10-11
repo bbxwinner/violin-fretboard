@@ -14,7 +14,7 @@ const Qe = {
   fingerPositionLabelColor: {} as Record<string, number>,
   volume: 80,
   noteDuration: 500,
-  theme: 'classic' as BoardTheme,
+  theme: 'antique' as BoardTheme,
   boardWidth: { classic: 160, antique: 300 } as Record<BoardTheme, number>,
   noteFontSize: { classic: 12.8, antique: 16 } as Record<BoardTheme, number>,
 }
