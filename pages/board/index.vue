@@ -297,8 +297,8 @@ watch(
   color: #fff;
 }
 .fingerboard.fingerboard--antique .finger-position-circle-highlighted {
-  background-color: #ffd700;
-  border-color: #ffd700;
+  background-color: #ff0;
+  border-color: #ff0;
   color: #000;
 }
 .info-mobile .info-fixed {
