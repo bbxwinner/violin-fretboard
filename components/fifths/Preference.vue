@@ -109,3 +109,47 @@ const transitionMs = computed({
   set: (h: number) => store.setFingerOverlayTransitionMs(Number(h)),
 })
 </script>
+
+<style scoped>
+.fifths-preference-card {
+  width: 100%;
+}
+
+.fifths-pref-section-title {
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.fifths-pref-section-title-with-margin {
+  margin-top: 20px;
+}
+
+.fifths-position-ranges {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fifths-position-range-header,
+.fifths-position-range-row {
+  display: grid;
+  grid-template-columns: 1fr 90px 90px;
+  gap: 8px;
+  align-items: center;
+}
+
+.fifths-pref-checkbox {
+  min-width: 0;
+}
+
+.fifths-position-ranges-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.fifths-pref-slider-value {
+  min-width: 70px;
+  text-align: right;
+}
+</style>

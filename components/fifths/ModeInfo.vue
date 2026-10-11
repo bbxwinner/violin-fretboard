@@ -1,10 +1,10 @@
 <template>
   <section class="fifths-mode-info">
     <div class="mode-tabs-card">
-      <v-slide-group v-model="tab" density="compact" color="primary" class="mode-tabs">
+      <v-tabs v-model="tab" density="compact" color="primary" class="mode-tabs">
         <v-tab value="major">{{ majorTitle }}</v-tab>
         <v-tab value="minor">{{ minorTitle }}</v-tab>
-      </v-slide-group>
+      </v-tabs>
       <v-window v-model="tab" class="mode-tab-panels">
         <v-window-item value="major">
           <table class="mode-notes-table">
@@ -111,3 +111,97 @@ const minorRows = computed(() => {
   })
 })
 </script>
+
+<style scoped>
+.fifths-mode-info {
+  width: 440px;
+  margin-top: -12px;
+  padding: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 12px;
+  background: #fffffff2;
+  box-shadow: 0 8px 24px #0f172a29;
+}
+
+.mode-tabs-card {
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  border-radius: 10px;
+}
+
+.mode-tabs {
+  background: #f8fafc;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.12);
+}
+
+:deep(.mode-tabs .v-tab) {
+  text-transform: none;
+}
+
+.mode-tab-panels {
+  background: #fff;
+  overflow-x: auto;
+}
+
+.mode-notes-table {
+  width: 100%;
+  table-layout: auto;
+  border-collapse: collapse;
+  color: #0f172a;
+  font-size: 0.84rem;
+}
+
+.mode-notes-table td {
+  padding: 6px 8px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  text-align: left;
+  white-space: normal;
+  overflow-wrap: break-word;
+  hyphens: auto;
+  word-break: normal;
+  word-break: auto-phrase;
+}
+
+.mode-notes-table tr:nth-child(odd) td {
+  background: #f8fafc;
+}
+
+.degree-cell,
+.role-cell {
+  font-weight: 700;
+}
+
+.degree-cell {
+  width: 30px;
+  text-align: center !important;
+}
+
+.note-cell {
+  min-width: 46px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.mode-minor-variants-table {
+  width: 100%;
+  table-layout: auto;
+}
+
+.variant-label-cell {
+  min-width: 84px;
+  font-weight: 700;
+}
+
+.variant-degree-cell {
+  font-weight: 700;
+  text-align: center;
+}
+
+@media (max-width: 480px) {
+  .fifths-mode-info {
+    width: 100%;
+    max-width: 372px;
+  }
+}
+</style>

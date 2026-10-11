@@ -9,9 +9,14 @@
 <script setup lang="ts">
 const { t } = useI18n()
 
-const props = defineProps<{
-  semitoneCount?: number
-}>()
+const props = withDefaults(
+  defineProps<{
+    semitoneCount?: number
+  }>(),
+  {
+    semitoneCount: 30,
+  },
+)
 
 const store = useFifthStore()
 
@@ -66,3 +71,32 @@ const boxes = computed(() => {
     })
 })
 </script>
+
+<style scoped>
+.fifths-hand-position-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 6;
+  pointer-events: none;
+}
+
+.position-box {
+  position: absolute;
+  border: 4px solid;
+  border-radius: 10px;
+  box-sizing: border-box;
+}
+
+.position-label {
+  position: absolute;
+  top: 0;
+  left: calc(100% + 10px);
+  font-size: 1.15rem;
+  font-weight: 800;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.28);
+}
+</style>

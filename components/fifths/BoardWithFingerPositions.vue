@@ -7,8 +7,23 @@
 </template>
 
 <script setup lang="ts">
-defineProps<{
-  mode?: string
-  semitoneCount?: number
-}>()
+withDefaults(
+  defineProps<{
+    mode?: string
+    semitoneCount?: number
+  }>(),
+  {
+    mode: 'C',
+    semitoneCount: 30,
+  },
+)
 </script>
+
+<style scoped>
+.fifths-overlay-host {
+  position: relative;
+  overflow: visible;
+  width: -moz-fit-content;
+  width: fit-content;
+}
+</style>

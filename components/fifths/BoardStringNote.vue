@@ -33,3 +33,49 @@ const cellClass = computed(() => ({
   'note-cell-highlight-miss': props.highlightMode && !hit.value,
 }))
 </script>
+
+<style scoped>
+.note-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 52px;
+  height: 52px;
+  border: 1px solid rgba(0, 0, 0, 0.35);
+  border-radius: 6px;
+  background: #fff;
+  line-height: 1;
+  user-select: none;
+}
+
+.note-cell-natural {
+  background: #f9fafb;
+  font-weight: 700;
+}
+
+.note-natural {
+  font-size: 1.1rem;
+}
+
+.note-accidental {
+  font-size: 0.72rem;
+  font-weight: 600;
+}
+
+.note-cell-highlight-mode {
+  border: 4px solid transparent;
+  background: transparent;
+}
+
+.note-cell-highlight-hit {
+  border-color: #1e40af;
+  background: #facc1559;
+}
+
+.note-cell-highlight-miss {
+  border-color: transparent;
+  background: transparent;
+  color: transparent;
+}
+</style>

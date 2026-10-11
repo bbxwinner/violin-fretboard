@@ -15,10 +15,16 @@
 </template>
 
 <script setup lang="ts">
-const props = defineProps<{
-  mode?: string
-  semitoneCount?: number
-}>()
+const props = withDefaults(
+  defineProps<{
+    mode?: string
+    semitoneCount?: number
+  }>(),
+  {
+    mode: 'C',
+    semitoneCount: 30,
+  },
+)
 
 const { $fifthsCircleModes, $getFifthsModePitchClasses } = useNuxtApp() as any
 const store = useFifthStore()
@@ -87,3 +93,49 @@ function isHit(s: { rootPitchClass: number }, r: number): boolean {
   return cMajorPitchClasses.value.has(pc)
 }
 </script>
+
+<style scoped>
+.fifths-finger-positions-host {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.fifths-finger-positions {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.string-column-highlight {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.string-notes-highlight {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.note-highlight-cell {
+  width: 52px;
+  height: 52px;
+  border: 4px solid transparent;
+  border-radius: 6px;
+  background: transparent;
+}
+
+.note-highlight-hit {
+  border-color: #1e40af;
+  background: #facc1559;
+}
+</style>
