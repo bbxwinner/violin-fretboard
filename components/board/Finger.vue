@@ -16,10 +16,14 @@
       </div>
     </div>
     <VioolStringLabel :is-left="false" />
+    <PositionLabels v-if="!isRow" />
   </v-card>
+  <PositionLabels v-if="isRow" mobile />
 </template>
 
 <script setup lang="ts">
+import { useDisplay } from 'vuetify'
+
 const store = useBoardStore()
 const themeClass = computed(() => (store.preference.theme === 'antique' ? 'fingerboard--antique' : ''))
 const cardStyle = computed(() => {
@@ -37,6 +41,10 @@ const cardStyle = computed(() => {
   return style
 })
 const eo = 4
+
+// 窄屏（<960px）把位标签改为指板下方横向行，避免挤占灰色半音条空间
+const { mdAndUp } = useDisplay()
+const isRow = ref(false)
 
 let startX: number | null = null
 let startY: number | null = null
@@ -64,6 +72,8 @@ function onTouchEnd() {
 }
 
 onMounted(() => {
+  isRow.value = !mdAndUp.value
+  watch(mdAndUp, (v) => (isRow.value = !v))
   store.loadPreferenceLocalStorage()
   window.addEventListener('touchstart', onTouchStart)
   window.addEventListener('touchmove', onTouchMove)
