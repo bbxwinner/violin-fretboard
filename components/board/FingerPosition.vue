@@ -61,9 +61,14 @@ const standardStyle = computed(() => ({
   top: `calc(100% - ${pos.value.standardPosition.percentage}%)`,
   transform: `translate(calc(-50% + -${offset.value}px), -50%)`,
 }))
-const opacityStyle = computed(() => ({
-  opacity: $isNoteHiddenInCurrentMode(pos.value.pitch, pos.value.altPitch, store.preference.modeMajor) ? 0.2 : 1,
-}))
+const opacityStyle = computed(() => {
+  const dimmedByMode = $isNoteHiddenInCurrentMode(pos.value.pitch, pos.value.altPitch, store.preference.modeMajor)
+  const activePos = store.activePositionRange
+  const dimmedByPosition =
+    activePos !== null && (props.nthSemitone < activePos.startRow || props.nthSemitone > activePos.endRow)
+  // 与调外音一致：调外音、或选中某把位时的把位外音，都淡化显示
+  return { opacity: dimmedByMode || dimmedByPosition ? 0.2 : 1 }
+})
 const isActive = computed(
   () =>
     store.currentNote &&

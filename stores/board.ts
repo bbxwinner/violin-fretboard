@@ -29,6 +29,15 @@ let arpeggioTimer: ReturnType<typeof setInterval> | null = null
 
 type Note = { pitch: string; octave: number } | null
 
+// 指板渲染到的最大行：「全部」用 semitonesPerString-1；选中某把位时扩展到该把位 endRow
+//（保证当前把位完整可见），并与 semitonesPerString-1 取大，让其余行也渲染出来（用于淡化显示）
+function getBoardDisplayEndRow(pref: { handPosition: number; semitonesPerString: number }): number {
+  const pos = pref.handPosition
+  if (!pos) return pref.semitonesPerString - 1
+  const range = getHandPositionRange(pos)
+  return range ? Math.max(pref.semitonesPerString - 1, range.endRow) : pref.semitonesPerString - 1
+}
+
 export const useBoardStore = defineStore('board', {
   state: () => ({
     currentNote: null as Note,
@@ -48,17 +57,26 @@ export const useBoardStore = defineStore('board', {
     },
     fingerPositionLabelColorArray: (e) => {
       const t: number[] = []
-      const pos = e.preference.handPosition
-      const range = pos ? getHandPositionRange(pos) : null
-      const maxRow = range ? range.endRow : e.preference.semitonesPerString - 1
+      const maxRow = getBoardDisplayEndRow(e.preference)
       for (let n = 0; n <= maxRow; n++) {
         const a = e.preference.fingerPositionLabelColor[n]
         DP[a] ? t.push(a) : t.push(0)
       }
       return t
     },
-    // 指板上要渲染的半音行：0=全部（0..semitonesPerString-1）；否则只渲染当前把位覆盖的行
+    // 指板要渲染的半音行：恒从空弦(0)起，到 (semitonesPerString-1) 与当前把位 endRow 的较大值。
+    // 选中某把位时，该把位完整可见，其余行照常渲染（由 FingerPosition 负责淡化）
     visibleSemitones: (e) => {
+      const endRow = getBoardDisplayEndRow(e.preference)
+      return Array.from({ length: endRow + 1 }, (_, i) => i)
+    },
+    // 当前选中把位的行区间（「全部」时为 null）：用于判定“把位外音”是否淡化
+    activePositionRange: (e) => {
+      const pos = e.preference.handPosition
+      return pos ? getHandPositionRange(pos) : null
+    },
+    // 琶音收集音符的行：「全部」= 0..semitonesPerString-1；选中把位时 = 仅该把位的行（只播展示的音）
+    arpeggioSemitones: (e) => {
       const pos = e.preference.handPosition
       if (!pos) return Array.from({ length: e.preference.semitonesPerString }, (_, i) => i)
       return getHandPositionRows(pos)
@@ -193,8 +211,8 @@ export const useBoardStore = defineStore('board', {
       const getPos = app.$getPositionOnString
       const justFreqOpt = this.preference.tuningJustIntonation
       const strings = this.strings
-      // 仅在当前把位展示到的半音行内收集琶音音：与指板显示的音一致，不少也不超出
-      const rows = this.visibleSemitones
+      // 仅在当前把位展示到的半音行内收集琶音音：与指板完整显示的音一致，不少也不超出
+      const rows = this.arpeggioSemitones
       const arpeggioNotes: { pitch: string; octave: number; midi: number }[] = []
       const noteSet = new Set<number>()
       strings.forEach((str) => {
