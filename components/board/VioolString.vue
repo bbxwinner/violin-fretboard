@@ -6,9 +6,9 @@
       :style="{ borderLeft: `${thickness * scale}px solid var(--vf-string-color, #000)` }"
     >
       <finger-position
-        v-for="i in semitones"
-        :key="i"
-        :nth-semitone="i - 1"
+        v-for="n in visibleSemitones"
+        :key="n"
+        :nth-semitone="n"
         :str-thickness="thickness * scale"
         :str-freq="freq"
         :str-pitch="pitch"
@@ -30,7 +30,7 @@ const props = defineProps<{
 }>()
 
 const store = useBoardStore()
-const semitones = computed(() => store.preference.semitonesPerString)
+const visibleSemitones = computed(() => store.visibleSemitones)
 const scale = computed(() => store.preference.boardWidth[store.preference.theme] / 160)
 const fanStyle = computed(() => {
   if (store.preference.theme !== 'antique' || !props.fanOffset) return {}

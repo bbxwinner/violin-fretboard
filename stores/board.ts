@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia'
 import { getArpeggioPitchesFromMode, noteToMidi } from '../utils/arpeggio'
 import { U, DP } from '../utils/music'
+import { HAND_POSITIONS, getHandPositionRange, getHandPositionRows } from '../utils/handPositions'
 
 export type BoardTheme = 'classic' | 'antique'
 
@@ -17,6 +18,7 @@ const Qe = {
   theme: 'antique' as BoardTheme,
   boardWidth: { classic: 160, antique: 300 } as Record<BoardTheme, number>,
   noteFontSize: { classic: 12.8, antique: 16 } as Record<BoardTheme, number>,
+  handPosition: 0,
 }
 const et = 'preference'
 const Ie = Math.pow(2, 7 / 12)
@@ -46,11 +48,20 @@ export const useBoardStore = defineStore('board', {
     },
     fingerPositionLabelColorArray: (e) => {
       const t: number[] = []
-      for (let n = 0; n < e.preference.semitonesPerString; n++) {
+      const pos = e.preference.handPosition
+      const range = pos ? getHandPositionRange(pos) : null
+      const maxRow = range ? range.endRow : e.preference.semitonesPerString - 1
+      for (let n = 0; n <= maxRow; n++) {
         const a = e.preference.fingerPositionLabelColor[n]
         DP[a] ? t.push(a) : t.push(0)
       }
       return t
+    },
+    // 指板上要渲染的半音行：0=全部（0..semitonesPerString-1）；否则只渲染当前把位覆盖的行
+    visibleSemitones: (e) => {
+      const pos = e.preference.handPosition
+      if (!pos) return Array.from({ length: e.preference.semitonesPerString }, (_, i) => i)
+      return getHandPositionRows(pos)
     },
     strings: (e) => {
       const t = e.preference.pitchStandard
@@ -73,6 +84,9 @@ export const useBoardStore = defineStore('board', {
     },
     setPreference(key: string, value: unknown) {
       ;(this.preference as any)[key] = value
+      // 把位 / 每弦半音数 决定“展示到的音”：变化时若正在播放琶音则停止，
+      // 避免继续播放新视野之外的音（琶音仅播放展示到的音）
+      if ((key === 'handPosition' || key === 'semitonesPerString') && this.isPlayingArpeggio) this.stopArpeggioPlay()
     },
     savePreferenceLocalStorage() {
       if (import.meta.client) localStorage.setItem(et, JSON.stringify(this.preference))
@@ -149,6 +163,13 @@ export const useBoardStore = defineStore('board', {
             }
             return { ...def }
           })(),
+          handPosition:
+            typeof t.handPosition === 'number' &&
+            Number.isInteger(t.handPosition) &&
+            t.handPosition >= 0 &&
+            t.handPosition <= HAND_POSITIONS.length
+              ? t.handPosition
+              : n.handPosition,
         }
         this.preference = a
       } catch (err) {
@@ -158,6 +179,7 @@ export const useBoardStore = defineStore('board', {
     },
     resetPreferenceToDefault() {
       const app: any = useNuxtApp()
+      this.stopArpeggioPlay()
       this.preference = { ...Qe }
       app.$sendGAClickPreferenceEvent('reset')
     },
@@ -171,12 +193,13 @@ export const useBoardStore = defineStore('board', {
       const getPos = app.$getPositionOnString
       const justFreqOpt = this.preference.tuningJustIntonation
       const strings = this.strings
-      const count = this.preference.semitonesPerString
+      // 仅在当前把位展示到的半音行内收集琶音音：与指板显示的音一致，不少也不超出
+      const rows = this.visibleSemitones
       const arpeggioNotes: { pitch: string; octave: number; midi: number }[] = []
       const noteSet = new Set<number>()
       strings.forEach((str) => {
         const justFreq = justFreqOpt ? str.freqJustIntonation : null
-        for (let i = 0; i < count; i++) {
+        for (const i of rows) {
           const info = getPos(i, str.pitch, str.freq, str.octave, justFreq)
           const match = pitches.includes(info.pitch) || (info.altPitch && pitches.includes(info.altPitch))
           if (match) {

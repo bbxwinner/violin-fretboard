@@ -4,7 +4,7 @@
     :style="{ height: store.preference.stringLength + 'px' }"
     @click="store.setCurrentNote(null)"
   >
-    <finger-position-label v-for="i in semitones" :key="i" :nth-semitone="i - 1" :is-left="isLeft" />
+    <finger-position-label v-for="n in visibleSemitones" :key="n" :nth-semitone="n" :is-left="isLeft" />
   </div>
 </template>
 
@@ -12,5 +12,5 @@
 defineProps<{ isLeft: boolean }>()
 
 const store = useBoardStore()
-const semitones = computed(() => store.preference.semitonesPerString)
+const visibleSemitones = computed(() => store.visibleSemitones)
 </script>

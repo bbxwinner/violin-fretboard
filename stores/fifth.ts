@@ -1,19 +1,13 @@
+import { HAND_POSITIONS, HAND_POSITION_RANGES, type HandPositionRange } from '../utils/handPositions'
+
 export const FIFTHS_PREF_KEY = 'fifthPreference'
 const xt = 640
 const It = 120
 const Ot = 2200
-const se = [1, 2, 3, 4, 5, 6, 7]
-type Range = { startRow: number; endRow: number }
+const se = HAND_POSITIONS
+type Range = HandPositionRange
 
-const J: Record<number, Range> = {
-  1: { startRow: 0, endRow: 7 },
-  2: { startRow: 3, endRow: 9 },
-  3: { startRow: 5, endRow: 11 },
-  4: { startRow: 7, endRow: 12 },
-  5: { startRow: 8, endRow: 14 },
-  6: { startRow: 12, endRow: 19 },
-  7: { startRow: 14, endRow: 21 },
-}
+const J: Record<number, Range> = HAND_POSITION_RANGES
 
 function Q(): Record<number, Range> {
   return se.reduce((e, o) => {

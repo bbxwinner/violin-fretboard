@@ -18,6 +18,13 @@
           v-model="theme"
         />
         <v-select
+          :label="t('board_hand_position')"
+          :items="positionItems"
+          item-title="label"
+          item-value="value"
+          v-model="position"
+        />
+        <v-select
           v-model="display"
           :items="displayItems"
           item-title="label"
@@ -124,6 +131,7 @@
 
 <script setup lang="ts">
 import { U } from '../../utils/music'
+import { HAND_POSITIONS } from '../../utils/handPositions'
 import { useBoardPreference, useThemePreference } from '../../composables/useBoardPreference'
 
 defineProps<{ isMobile?: boolean }>()
@@ -145,6 +153,7 @@ const display = useBoardPreference('displayOptions')
 const theme = useBoardPreference('theme')
 const boardW = useThemePreference('boardWidth')
 const font = useThemePreference('noteFontSize')
+const position = useBoardPreference('handPosition')
 
 const modeItems = $getTranslatedModesOptions()
 const displayItems = computed(() => $getTranslatedDisplayOptions(U))
@@ -152,6 +161,10 @@ const themeItems = [
   { label: t('board_theme_classic'), value: 'classic' },
   { label: t('board_theme_antique'), value: 'antique' },
 ]
+const positionItems = computed(() => [
+  { label: t('board_hand_position_all'), value: 0 },
+  ...HAND_POSITIONS.map((n) => ({ label: t('board_hand_position_nth', { n }), value: n })),
+])
 
 function reset() {
   store.resetPreferenceToDefault()
